@@ -1,2 +1,2 @@
-sun{
-flag{
+bronco{
+broncoctf{
