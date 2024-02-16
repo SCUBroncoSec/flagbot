@@ -116,10 +116,11 @@ func main() {
 
 // ready runs as soon as the bot is ready after deployment.
 // TODO: swap out hard coded status message for something more dynamic.
-//		 perhaps use an outside file to hold the string along with other
-//		 general metadata for the application?
+//
+//	perhaps use an outside file to hold the string along with other
+//	general metadata for the application?
 func ready(s *discordgo.Session, event *discordgo.Ready) {
-	s.UpdateStatus(0, "Watching for flags (´･ω･`)")
+	s.UpdateGameStatus(0, "Watching for flags (´･ω･`)")
 }
 
 // messageCreate is a hook for any new discord messages. Any time a message is created
