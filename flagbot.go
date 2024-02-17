@@ -43,10 +43,13 @@ func init() {
 	flag.StringVar(&configurationPath, "c", "configuration", "Configuration directory path")
 	flag.Parse()
 
-	// Check if discord token was properly parsed. If not exit
+	// Check if discord token was properly parsed. If not, check env. If not, exit
 	if token == "" {
-		log.Error("Error in parsing command. Proper Usage: flagbot -t <bot token> -c <configuration path>")
-		os.Exit(1)
+		token = os.Getenv("TOKEN")
+		if token == "" {
+			log.Error("No token supplied")
+			os.Exit(1)
+		}
 	}
 
 	// Load files into their respective variables
