@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
+	"strings"
 	"syscall"
 	"time"
 
@@ -31,12 +32,20 @@ var (
 
 func init() {
 	// Setup logging
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "info"
+	}
+	level, err := log.ParseLevel(strings.ToLower(logLevel))
+	if err != nil {
+		log.Fatalf("Invalid log level: %s", logLevel)
+	}
 	log.SetOutput(os.Stdout)
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp: true,
 		DisableColors: true,
 	})
-	log.SetLevel(log.InfoLevel)
+	log.SetLevel(level)
 
 	// Parse out command line arguments
 	flag.StringVar(&token, "t", "", "Bot Token")
@@ -53,7 +62,6 @@ func init() {
 	}
 
 	// Load files into their respective variables
-	var err error
 	gifSlice, err = readFileToSlice(configurationPath + "/gifs.txt")
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -112,7 +120,7 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
-
+	log.Debug("Exiting...")
 	// Cleanly close down the Discord session.
 	dg.Close()
 }
@@ -129,6 +137,7 @@ func ready(s *discordgo.Session, event *discordgo.Ready) {
 // messageCreate is a hook for any new discord messages. Any time a message is created
 // in a monitored channel, this function is run against it
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	log.Debug("Got message", m.Content)
 	go flagCheck(s, m)
 }
 
