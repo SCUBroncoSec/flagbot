@@ -29,4 +29,4 @@ USER nonroot:nonroot
 
 ENV TOKEN=""
 
-ENTRYPOINT /flagbot -t ${TOKEN} -c /config
+ENTRYPOINT ["/flagbot", "-c", "/config"]
